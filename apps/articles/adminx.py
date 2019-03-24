@@ -9,8 +9,8 @@ class ArticleAdmin(object):
                    "create_time", "author", "category"]
     search_fields = ['title', ]
 
-    readonly_fields=["desc", "img","count","create_time"]
-    exclude = ["author","views", "comment_count", "comment_time"]
+    readonly_fields=["desc","count","create_time"]
+    exclude = ["author", "img","views", "comment_count", "comment_time"]
 
     list_filter = ["title", "category", "author", "status"]
 

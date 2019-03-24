@@ -94,6 +94,16 @@ CKEDITOR_CONFIGS = {
     }
 }
 
+#
+# def get_filename(filename):
+#     return filename.upper('http://127.0.0.1:8000/media/'+filename)
+#
+# CKEDITOR_FILENAME_GENERATOR = 'get_filename'
+
+CKEDITOR_IMAGE_BACKEND = "pillow"
+IMAGE_QUALITY = 40  # 缩略图质量
+THUMBNAIL_SIZE = (300, 300)  # 缩略图大小
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
