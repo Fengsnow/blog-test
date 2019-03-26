@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'corsheaders',
     'crispy_forms',
+    'django_filters',
     'rest_framework',
     'xadmin',
     'ckeditor',
@@ -102,7 +103,7 @@ CKEDITOR_CONFIGS = {
 
 CKEDITOR_IMAGE_BACKEND = "pillow"
 IMAGE_QUALITY = 40  # 缩略图质量
-THUMBNAIL_SIZE = (300, 300)  # 缩略图大小
+THUMBNAIL_SIZE = (500, 300)  # 缩略图大小
 
 TEMPLATES = [
     {

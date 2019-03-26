@@ -25,7 +25,7 @@ class ArticleAdmin(object):
         for tag in soup.find_all('img'):
             if tag:
                 img_url = tag.get('src')
-                img = img_url[7:]
+                img = img_url[7:-4]+'_thumb'+img_url[-4:]
                 print(img)
                 break
         if img:

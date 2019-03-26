@@ -3,6 +3,8 @@ from rest_framework.pagination import PageNumberPagination
 import datetime
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Category,Article,Tag
 from .serializer import CategorysSer,ArticlesSer,TagsSer,HotArticlesSer,CardArticlesSer,TimeArticlesSer,ArticlesDetailSer
@@ -55,6 +57,12 @@ class TimeLineset(mixins.ListModelMixin,viewsets.GenericViewSet):
     serializer_class = TimeArticlesSer
 
     def list(self, request, *args, **kwargs):
+
+        """
+        这里的一段循环就是为了方便vue适配三层时间线，
+        而django模板只需要一个regroup就行了，心塞塞
+
+        """
         queryset = Article.objects.filter(status=1).order_by("-create_time")[:50]
         ser = TimeArticlesSer(instance=queryset,many=True)
         data = {}
@@ -63,13 +71,14 @@ class TimeLineset(mixins.ListModelMixin,viewsets.GenericViewSet):
         day = {}
 
 
+
         for i,d in enumerate(ser.data):
             data[i+1]=d
         print(data)
         for (d, x) in data.items():
             #print("key:"+str(d)+",value:"+str(x))
             day[x['create_time']] = x
-            month[x['month']+"月"] = day
+            month[x['month']+"月"] = day#如果不加字符串的话，数据会自动按数字从小到大排序的
             print(x['year'])
             year[str(x['year'])+"年"] = month
             # a = x['month']
@@ -89,16 +98,26 @@ class TimeLineset(mixins.ListModelMixin,viewsets.GenericViewSet):
 
 class ArticlesViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):
     """
-    文章列表页, 分页， 搜索， 过滤， 排序
+    文章列表页, 分页， 搜索， 过滤
     """
-    queryset = Article.objects.filter(status=1).order_by("-create_time")
+    queryset = Article.objects.filter(status=1).order_by("create_time")
     serializer_class = ArticlesSer
     pagination_class = ArticlesPage
-    #filter_backends = (DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter)
-    #filter_class = GoodsFilter
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    filter_fields = ('category','tags','author')
+    search_fields=('title','detail')
+
     def get_serializer_class(self):
         if self.action == "retrieve":
             return ArticlesDetailSer
         return ArticlesSer
+
+    def retrieve(self, request, *args, **kwargs):
+        #统计阅读量
+        obj = self.get_object()
+        obj.views +=1
+        obj.save()
+        serializer = self.get_serializer(obj)
+        return Response(serializer.data)
 
 

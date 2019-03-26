@@ -12,11 +12,14 @@ class CategorysSer(serializers.ModelSerializer):
 
 
 class TagsSer(serializers.ModelSerializer):
-    time = serializers.DateTimeField(source='create_time', format="%Y-%m-%d", required=False)
+    """
+    标签
+    """
+    #time = serializers.DateTimeField(source='create_time', format="%Y-%m-%d", required=False)
 
     class Meta:
         model = Category
-        fields = ["id","name","time"]
+        fields = ["id","name"]
 
 class HotArticlesSer(serializers.ModelSerializer):
     """
@@ -58,13 +61,14 @@ class ArticlesSer(serializers.ModelSerializer):
     categoryName = serializers.CharField(source='category.name',required=False, read_only=True)
     class Meta:
         model = Article
-        fields = ["id","title","desc","img","views","comment_count","time","name","categoryName"]
+        fields = ["id","title","desc","img","views","comment_count","time","name","category","categoryName"]
 
 class ArticlesDetailSer(serializers.ModelSerializer):
     name = serializers.CharField(source='author.username', required=False, read_only=True)
     avatar = serializers.ImageField(source='author.avatar', required=False, read_only=True)
     time = serializers.DateTimeField(source='create_time', format="%Y-%m-%d", required=False)
     categoryName = serializers.CharField(source='category.name',required=False, read_only=True)
+    tags = TagsSer(many=True)
     class Meta:
         model = Article
-        fields = ["id","title","desc","detail","img","views","comment_count","time","name","avatar","categoryName","tags"]
+        fields = ["id","title","desc","detail","img","views","comment_count","time","name","avatar","categoryName","category","tags"]
